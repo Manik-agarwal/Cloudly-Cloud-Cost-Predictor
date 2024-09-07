@@ -1,43 +1,92 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Meta tags and title -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Instance Predictor</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <title>AWS EC2 Instance Price Predictor</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(to right, #ece9e6, #ffffff);
+        }
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0px 5px 20px rgba(0,0,0,0.1);
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border: none;
+            border-radius: 50px;
+            padding: 10px 20px;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+        #result {
+            font-size: 1.2em;
+        }
+        /* Add more custom styles as needed */
+    </style>
 </head>
 <body>
-    <h1>Instance Predictor</h1>
-    <form action="/predict" method="post">
-        <!-- Instance Type Selection -->
-        <label for="instance">Select Instance Type:</label>
-        <select id="instance" name="instance_type">
-            {% for instance in instance_types %}
-                <option value="{{ instance }}">{{ instance }}</option>
-            {% endfor %}
-        </select>
-        <br><br>
+    <div class="container mt-5">
+        <!-- Header with an icon -->
+        <h1 class="text-center mb-4"><i class="fas fa-server"></i> AWS EC2 Instance Price Predictor</h1>
+        <div class="card p-4">
+            <!-- Prediction Form -->
+            <form action="/predict" method="post" id="predictionForm">
+                <div class="form-group">
+                    <label for="instance">Select Instance Type:</label>
+                    <select id="instance" name="instance_type" class="form-control" required>
+                        {% for instance in instance_types %}
+                            <option value="{{ instance }}">{{ instance }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="ope_sys">Select OS Type:</label>
+                    <select id="ope_sys" name="os_type" class="form-control" required>
+                        {% for ope_sys in os_list %}
+                            <option value="{{ ope_sys }}">{{ ope_sys }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <p><strong>Region:</strong> east (fixed)</p>
+                <button type="submit" class="btn btn-primary btn-block">Predict</button>
+            </form>
+        </div>
 
-        <!-- OS Type Selection -->
-        <label for="ope_sys">Select OS Type:</label>
-        <select id="ope_sys" name="os_type">
-            {% for ope_sys in os_list %}
-                <option value="{{ ope_sys }}">{{ ope_sys }}</option>
-            {% endfor %}
-        </select>
-        <br><br>
+        <!-- Result Display -->
+        <div id="result" class="alert alert-info mt-4" style="display: none;"></div>
 
-        <!-- Region is fixed, no need to input -->
-        <p>Region: east (fixed)</p>
+        <!-- Footer -->
+        <footer class="mt-5 text-center">
+            <p>&copy; 2023 AWS EC2 Instance Price Predictor. All rights reserved.</p>
+        </footer>
+    </div>
 
-        <!-- Submit Button -->
-        <input type="submit" value="Predict">
-    </form>
-
-    <!-- Result Display -->
-    <div id="result"></div>
-
-    <!-- JavaScript Link -->
-    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <!-- jQuery and Bootstrap JS for interactive features -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://kit.fontawesome.com/your-font-awesome-kit.js"></script> <!-- Replace with your Font Awesome kit -->
+    <script>
+        $(document).ready(function() {
+            $('#predictionForm').on('submit', function(event) {
+                event.preventDefault();
+                $('#result').hide().text('Calculating...').removeClass('alert-danger').addClass('alert-info');
+                $.post('/predict', $(this).serialize(), function(data) {
+                    $('#result').show().html('<strong>Prediction Result:</strong> ' + data);
+                }).fail(function() {
+                    $('#result').show().text('An error occurred. Please try again.').removeClass('alert-info').addClass('alert-danger');
+                });
+            });
+        });
+    </script>
 </body>
 </html>
