@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cloud Price Predictor</title>
+</head>
+<body>
+    <h1>Cloud Price Predictor</h1>
+    <form action="/predict" method="post">
+        <label for="instance_type">Instance Type:</label>
+        <input type="text" id="instance_type" name="instance_type" required><br><br>
+        
+        <label for="operating_system">Operating System:</label>
+        <input type="text" id="operating_system" name="operating_system" required><br><br>
+        
+        <label for="region">Region:</label>
+        <input type="text" id="region" name="region" required><br><br>
+        
+        <input type="submit" value="Predict Price">
+    </form>
+</body>
+</html>
